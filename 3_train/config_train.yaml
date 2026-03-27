@@ -1,0 +1,30 @@
+# 3_train/config_train.yaml
+data:
+  in_channels: 1
+  num_classes: 2
+
+model:
+  feat_dim: 256
+
+train:
+  epochs: 30
+  batch_size: 128
+  lr: 0.001
+  weight_decay: 0.0001
+  num_workers: 0
+  amp: true
+  seed: 42
+
+tasks:
+  - name: "exp_to_2170"
+    source: "experiment"
+    target: "centrifuge_2170"
+  - name: "exp_to_5320"
+    source: "experiment"
+    target: "centrifuge_5320"
+  - name: "exp_to_7500"
+    source: "experiment"
+    target: "centrifuge_7500"
+  - name: "exp_to_9710"
+    source: "experiment"
+    target: "centrifuge_9710"

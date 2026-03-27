@@ -1,0 +1,20 @@
+# 1_data/config_dataset.yaml
+raw_path: "./1_data/datasets"
+processed_path: "./1_data/processed"
+
+sampling_rate: 25600      # 采样率 Hz
+slice_time: 15            # 每段取前15秒
+window: 1                 # 滑窗长度（秒）
+overlap: 0.5              # 滑窗重叠率
+
+datasets:
+  experiment:
+    path: "./1_data/datasets/experiment"
+  centrifuge_2170:
+    path: "./1_data/datasets/centrifuge_2170"
+  centrifuge_5320:
+    path: "./1_data/datasets/centrifuge_5320"
+  centrifuge_7500:
+    path: "./1_data/datasets/centrifuge_7500"
+  centrifuge_9710:
+    path: "./1_data/datasets/centrifuge_9710"
