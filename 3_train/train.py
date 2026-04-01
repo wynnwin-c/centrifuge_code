@@ -29,6 +29,7 @@ sys.path.append(str(ROOT / "_2_models"))
 from _2_models.dann_baseline import build_dann  # type: ignore
 from _2_models.pdan_selective import build_pdan_selective  # type: ignore
 from _2_models.utils_loss import build_optimizer  # type: ignore
+from _2_models.bsdan import build_bsdan  # 新增导入
 
 
 class NpyDataset(Dataset):
@@ -50,7 +51,6 @@ class NpyDataset(Dataset):
         x = np.expand_dims(x, 0)
         y = self.y[idx]
         return torch.from_numpy(x), torch.tensor(y)
-
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -109,27 +109,48 @@ def train_one_epoch(model: nn.Module, dl_src: DataLoader, dl_tgt: DataLoader, de
     it_src = cycle(dl_src)
     it_tgt = cycle(dl_tgt)
     steps = min(len(dl_src), len(dl_tgt))
+    
     loss_cls_meter = 0.0
     loss_dom_meter = 0.0
     acc_src_meter = 0.0
+    
+    # 设定初始扩充比例 (论文中推荐的 rho_0，通常设为 1.0 或 0.5)
+    rho_0 = 1.0 
+
     for step in range(steps):
         src_x, src_y = next(it_src)
         tgt_x, _ = next(it_tgt)
-        src_x = src_x.to(device)
-        src_y = src_y.to(device)
-        tgt_x = tgt_x.to(device)
+        src_x, src_y, tgt_x = src_x.to(device), src_y.to(device), tgt_x.to(device)
+        
+        # 1. 计算 GRL 渐变权重 lambda
         p = (epoch * steps + step) / max(1, (total_epochs * steps))
         lambd = 2. / (1. + math.exp(-10 * p)) - 1.
+        
+        # 2. 计算 BSDAN 特有的衰减扩充比例 rho
+        current_rho = rho_0 * (1.0 - p) 
+
         optimizer.zero_grad()
+        
+        # 3. 前向传播 (判断一下是不是 bsdan)
         if model_name == "dann":
             out = model(src_x=src_x, tgt_x=tgt_x, src_y=src_y, grl_lambda=lambd)
+        elif model_name == "bsdan":
+            # 传进去 current_rho
+            out = model(src_x=src_x, tgt_x=tgt_x, src_y=src_y, grl_lambda=lambd, rho=current_rho)
         else:
             out = model(src_x=src_x, tgt_x=tgt_x, src_y=src_y, grl_lambda=lambd, adapt=True)
+            
+        # 4. 获取 Loss
         loss_cls = out.get("cls_loss", torch.tensor(0., device=device))
         loss_dom = out.get("domain_loss", torch.tensor(0., device=device))
-        loss = loss_cls + loss_dom
+        
+        # 【如果是 BSDAN，把熵损失加进总 Loss 里，权重设为 0.1】
+        loss_ent = out.get("entropy_loss", torch.tensor(0., device=device))
+        loss = loss_cls + loss_dom + 0.1 * loss_ent 
+        
         loss.backward()
         optimizer.step()
+        
         with torch.no_grad():
             logits = out.get("src_logits")
             if logits is not None:
@@ -137,16 +158,18 @@ def train_one_epoch(model: nn.Module, dl_src: DataLoader, dl_tgt: DataLoader, de
                 acc_src = (pred == src_y).float().mean().item()
             else:
                 acc_src = 0.0
+                
         loss_cls_meter += float(loss_cls.item())
         loss_dom_meter += float(loss_dom.item())
         acc_src_meter += acc_src
+        
         if (step + 1) % 10 == 0:
-            logger.info(f"epoch {epoch} step {step+1}/{steps} cls={loss_cls.item():.4f} dom={loss_dom.item():.4f} src_acc={acc_src:.4f} λ={lambd:.3f}")
+            logger.info(f"epoch {epoch} step {step+1}/{steps} cls={loss_cls.item():.4f} dom={loss_dom.item():.4f} ent={loss_ent.item():.4f} src_acc={acc_src:.4f} λ={lambd:.3f} ρ={current_rho:.3f}")
+            
     loss_cls_meter /= steps
     loss_dom_meter /= steps
     acc_src_meter /= steps
     return {"cls": loss_cls_meter, "dom": loss_dom_meter, "src_acc": acc_src_meter}
-
 
 @torch.no_grad()
 def evaluate(model: nn.Module, ds: NpyDataset, device: torch.device, batch_size: int = 256) -> Dict[str, object]:
@@ -230,7 +253,7 @@ def plot_tsne(model: nn.Module, ds: NpyDataset, device: torch.device, out_png: s
 
 def save_report(rep: Dict[str, object], out_dir: str, prefix: str):
     js = {
-        "acc": rep["acc"],
+        "acc": ["acc"],
         "cm": rep["cm"].tolist() if isinstance(rep["cm"], np.ndarray) else rep["cm"],
         "report": rep["report"],
     }
@@ -242,7 +265,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default=str(ROOT / "3_train" / "config_train.yaml"))
     parser.add_argument("--task", type=str, required=True)
-    parser.add_argument("--model", type=str, choices=["dann", "pdan"], default="pdan")
+    parser.add_argument("--model", type=str, choices=["dann", "pdan", "bsdan"], default="bsdan") # 加上 bsdan
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--batch_size", type=int, default=None)
     parser.add_argument("--lr", type=float, default=None)
@@ -277,9 +300,10 @@ def main():
     processed_dir = str(ROOT / "1_data" / "processed")
 
     dl_src, dl_tgt, ds_src, ds_tgt = make_dataloaders(task_cfg["source"], task_cfg["target"], processed_dir, batch_size, num_workers=int(cfg["train"].get("num_workers", 0)))
-
     if args.model == "dann":
         model = build_dann(in_channels=in_channels, num_classes=num_classes, feat_dim=int(cfg["model"]["feat_dim"]))
+    elif args.model == "bsdan":
+        model = build_bsdan(in_channels=in_channels, num_classes=num_classes, feat_dim=int(cfg["model"]["feat_dim"]))
     else:
         model = build_pdan_selective(in_channels=in_channels, num_classes=num_classes, feat_dim=int(cfg["model"]["feat_dim"]))
     model = model.to(device)
