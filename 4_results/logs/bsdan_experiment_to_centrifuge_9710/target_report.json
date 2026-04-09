@@ -1,17 +1,27 @@
 {
-  "acc": 0.0,
+  "acc": 1.0,
+  "f1": 0.5,
   "cm": [
     [
+      200,
       0,
       0,
-      112
+      0
     ],
     [
-      23,
       0,
-      33
+      200,
+      0,
+      0
     ],
     [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
       0,
       0,
       0
@@ -19,16 +29,16 @@
   ],
   "report": {
     "0": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0,
-      "support": 112.0
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 200.0
     },
     "1": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0,
-      "support": 56.0
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 200.0
     },
     "2": {
       "precision": 0.0,
@@ -36,18 +46,30 @@
       "f1-score": 0.0,
       "support": 0.0
     },
-    "accuracy": 0.0,
-    "macro avg": {
+    "3": {
       "precision": 0.0,
       "recall": 0.0,
       "f1-score": 0.0,
-      "support": 168.0
+      "support": 0.0
+    },
+    "accuracy": 1.0,
+    "macro avg": {
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1-score": 0.5,
+      "support": 400.0
     },
     "weighted avg": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0,
-      "support": 168.0
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 400.0
     }
+  },
+  "metrics": {
+    "shared_balanced_acc": 1.0,
+    "fault_recall": 1.0,
+    "fault_precision": 1.0,
+    "private_pred_rate": 0.0
   }
 }

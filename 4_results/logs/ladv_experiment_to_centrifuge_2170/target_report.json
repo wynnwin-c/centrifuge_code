@@ -4,15 +4,15 @@
   "cm": [
     [
       0,
-      0,
-      0,
-      112
+      4,
+      71,
+      37
     ],
     [
       0,
       0,
-      0,
-      56
+      43,
+      13
     ],
     [
       0,
@@ -70,6 +70,6 @@
     "shared_balanced_acc": 0.0,
     "fault_recall": 0.0,
     "fault_precision": 0.0,
-    "private_pred_rate": 1.0
+    "private_pred_rate": 0.9761904761904762
   }
 }

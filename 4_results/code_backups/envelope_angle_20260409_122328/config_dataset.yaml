@@ -1,0 +1,23 @@
+# 1_data/config_dataset.yaml
+raw_path: "./1_data/datasets"
+processed_path: "./1_data/processed"
+
+sampling_rate: 25600
+slice_time: 15
+window: 1
+overlap: 0.5
+use_turn_resample: true
+turns_per_sample: 3
+resample_points: 1024
+
+datasets:
+  experiment:
+    path: "./1_data/datasets/experiment"
+  centrifuge_2170:
+    path: "./1_data/datasets/centrifuge_2170"
+  centrifuge_5320:
+    path: "./1_data/datasets/centrifuge_5320"
+  centrifuge_7500:
+    path: "./1_data/datasets/centrifuge_7500"
+  centrifuge_9710:
+    path: "./1_data/datasets/centrifuge_9710"

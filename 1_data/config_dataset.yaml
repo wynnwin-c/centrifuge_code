@@ -2,10 +2,10 @@
 raw_path: "./1_data/datasets"
 processed_path: "./1_data/processed"
 
-sampling_rate: 25600      # 采样率 Hz
-slice_time: 15            # 每段取前15秒
-window: 1                 # 滑窗长度（秒）
-overlap: 0.5              # 滑窗重叠率
+sampling_rate: 25600
+slice_time: 15
+window: 1
+overlap: 0.5
 
 datasets:
   experiment:

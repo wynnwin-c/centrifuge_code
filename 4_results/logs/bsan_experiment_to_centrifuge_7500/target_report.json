@@ -1,17 +1,27 @@
 {
-  "acc": 0.0,
+  "acc": 0.66,
+  "f1": 0.3273015873015873,
   "cm": [
     [
+      107,
+      93,
       0,
-      2,
-      110
+      0
+    ],
+    [
+      43,
+      157,
+      0,
+      0
     ],
     [
       0,
       0,
-      56
+      0,
+      0
     ],
     [
+      0,
       0,
       0,
       0
@@ -19,16 +29,16 @@
   ],
   "report": {
     "0": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0,
-      "support": 112.0
+      "precision": 0.7133333333333334,
+      "recall": 0.535,
+      "f1-score": 0.6114285714285714,
+      "support": 200.0
     },
     "1": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0,
-      "support": 56.0
+      "precision": 0.628,
+      "recall": 0.785,
+      "f1-score": 0.6977777777777778,
+      "support": 200.0
     },
     "2": {
       "precision": 0.0,
@@ -36,18 +46,30 @@
       "f1-score": 0.0,
       "support": 0.0
     },
-    "accuracy": 0.0,
-    "macro avg": {
+    "3": {
       "precision": 0.0,
       "recall": 0.0,
       "f1-score": 0.0,
-      "support": 168.0
+      "support": 0.0
+    },
+    "accuracy": 0.66,
+    "macro avg": {
+      "precision": 0.33533333333333337,
+      "recall": 0.33,
+      "f1-score": 0.3273015873015873,
+      "support": 400.0
     },
     "weighted avg": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1-score": 0.0,
-      "support": 168.0
+      "precision": 0.6706666666666666,
+      "recall": 0.66,
+      "f1-score": 0.6546031746031747,
+      "support": 400.0
     }
+  },
+  "metrics": {
+    "shared_balanced_acc": 0.66,
+    "fault_recall": 0.785,
+    "fault_precision": 0.628,
+    "private_pred_rate": 0.0
   }
 }
