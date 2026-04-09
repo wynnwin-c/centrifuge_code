@@ -1,0 +1,46 @@
+# 3_train/config_train.yaml
+data:
+  in_channels: 1
+  num_classes: 4
+  class_names: ["N", "EF1", "EF2", "EF3"]
+
+model:
+  feat_dim: 256
+
+train:
+  epochs: 30
+  batch_size: 128
+  lr: 0.001
+  weight_decay: 0.0001
+  num_workers: 0
+  amp: true
+  seed: 42
+  rho_0: 1.0
+  entropy_weight: 0.1
+  lambda_u: 0.1
+  aux_source_weight: 0.5
+  aux_target_weight: 0.05
+  pseudo_threshold: 0.95
+  mu: 8
+
+tasks:
+  - name: "exp_to_2170"
+    source: "experiment"
+    target: "centrifuge_2170"
+    shared_classes: [0, 1]
+    source_private_classes: [2, 3]
+  - name: "exp_to_5320"
+    source: "experiment"
+    target: "centrifuge_5320"
+    shared_classes: [0, 1]
+    source_private_classes: [2, 3]
+  - name: "exp_to_7500"
+    source: "experiment"
+    target: "centrifuge_7500"
+    shared_classes: [0, 1]
+    source_private_classes: [2, 3]
+  - name: "exp_to_9710"
+    source: "experiment"
+    target: "centrifuge_9710"
+    shared_classes: [0, 1]
+    source_private_classes: [2, 3]

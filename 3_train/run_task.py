@@ -30,7 +30,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", type=int, required=True)
     parser.add_argument("--config", type=str, default=str(ROOT / "3_train" / "config_train.yaml"))
-    parser.add_argument("--models", type=str, nargs="+", default=["dann", "pdan"])
+    parser.add_argument("--models", type=str, nargs="+", default=["ladv", "sladv", "san", "bsan"])
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--batch_size", type=int, default=None)
     parser.add_argument("--lr", type=float, default=None)

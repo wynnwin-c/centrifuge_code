@@ -1,2 +1,11 @@
+**/__pycache__/
+*.pyc
+*.npy
 *.log
+# 忽略所有 PyTorch 模型文件
+*.pt
+*.pth
+# 如果你有专门存放权重的文件夹
+/checkpoints/
+/models/*.pt
 build/
